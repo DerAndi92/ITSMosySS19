@@ -2,8 +2,8 @@
 
 --------------------------------------
 HAW Hamburg Project "Illuminated Mind"
-Mobile Systeme / IT-Systeme SS 2019
 --------------------------------------
+Mobile Systeme / IT-Systeme SS 2019
 
 Created by
 Andreas Scholten
