@@ -90,7 +90,14 @@ int Umwandlung(String Clr, int pos) {
 }
 
 String setFarbe(int Light, int Farbe) {
-  // Ordnet Zahlen 1-6 Farbtönen zu und ruft "Umwandlung" auf,diese Werte werden in "pos" gespeichert, für Werte 7-9 erhält "blinkt" Werte 1-3. 
+  /* Ordnet Zahlen 1-6 Farbtönen zu und ruft Umwandlung() auf,diese Werte werden in pos[] gespeichert, für Werte 7-9 erhält blinkt[] Werte 1-3. 
+  Der Rückgabewert "Colour" wurde zu Anfang zur Speicherung der Farben, die eingegeben wurden verwendet. Die jeweilige Variable
+  wurde durch pos[] ersetzt, daher erfüllt die Rückgabe keinen Zweck mehr.
+  Außerdem wurde direkt in setFarbe() das Feedback initiiert, dies war zu Testzwecken sinnvoll um die Effekte einzurichten. 
+  Auf diese Art und Weise wurden die Effekte für jeden Scheinwerfer einzeln und nacheinander ausgegeben. Für das Spiel ist jedoch eine 
+  zeitlich möglichst parallele Ausgabe erstrebenswert, daher befindet sich nur noch eine Belegung 
+  des Feedback-Variablenstrings blinkt[] in setFarbe(). Die Aufgaben von setFarbe() könnten der Übersicht halber
+  problemlos in anderen Teilen des Programms untergebracht werden.*/
   if (Farbe == 1) {
     Colour = "rot";
     Umwandlung(Colour, Light);
@@ -151,7 +158,9 @@ void loop() {
   randomSeed(analogRead(0));
   
   for (int i = 1; i <= 4; i++) {
-    //kontinuierliche Auswertung von "blinkt"
+    /*Blinkt[] wird in der Hauptschleife kontinuierlich ausgewertet, Ausgangszustand ist [0,0,0,0]. 
+    Die Stelle im String ist wieder verknüpft mit der Scheinwerferposition, Wertebelegungen mit den Zahlen 1-3 
+    gehören zum Feedback, 4 zum Spielgewinn. */
     if ((blinkt[i - 1] == 1) && (m <= 250)) {
       // "richtig", Licht wird heller
       Position(i);
@@ -208,7 +217,7 @@ void loop() {
         delay(30);
       }
       if (o > 250) {
-        // Alle Scheinwerfer erhalten den Wert 4 in "blinkt" und "pulsieren", der Servo wird gedreht (Kiste öffnet sich)
+        // Alle Scheinwerfer erhalten den Wert 4 in blinkt[] und "pulsieren", der Servo wird gedreht (Kiste öffnet sich)
         for (int l = 0; l <= 3; l++) {
           blinkt[l] = 4;
         }
@@ -223,12 +232,10 @@ void loop() {
         delay(50);
       }
     }
-
-
   }
 
   if (BTSerial.available() > 0) {
-    // eine Eingabe am BT-Modul wurde detektiert, alle Veränderlichen werden auf Ausgangszustand versetzt
+    eine Eingabe am BT-Modul wurde detektiert, alle Veränderlichen (außer pos[]) werden auf Ausgangszustand versetzt
     Eingabe = BTSerial.readString();
     BTSerial.println(Eingabe);
     DmxSimple.write(13, 0);
@@ -262,7 +269,7 @@ void loop() {
     if (Eingabe.charAt(0) == 's') {
       // Starteingabe
       if (Eingabe.charAt(1) == '0') {
-        // alle Lichter weiß
+        // alle Lichter weiss
         for (int i = 1; i <= 10; i = i + 3) {
           Umwandlung("weiss", i);
           DmxSimple.write(i, r);
@@ -272,12 +279,7 @@ void loop() {
         }
       }
       if (Eingabe.charAt(1) == '1') {
-        // erster Scheinwerfer weiß, Rest aus
-        Umwandlung("weiss", 1);
-        DmxSimple.write(rpos, r);
-        DmxSimple.write(gpos, g);
-        DmxSimple.write(bpos, b);
-
+        // erster Scheinwerfer bleibt weiss, Rest aus
         for (int i = 4; i <= 12; i++) {
           DmxSimple.write(i, 0);
         }
@@ -296,7 +298,7 @@ void loop() {
         DmxSimple.write(gpos, g);
         DmxSimple.write(bpos, b);
       }
-      if (nextone <= 4) { // wenn >4 dann letzte Farbeingabe in der Runde, daher kein weißer Scheinwerfer als nächstes
+      if (nextone <= 4) { // wenn >4 dann letzte Farbeingabe in der Runde, daher kein weisser Scheinwerfer als nächstes
         Umwandlung("weiss", nextone);
         DmxSimple.write(rpos, r);
         DmxSimple.write(gpos, g);
@@ -305,7 +307,7 @@ void loop() {
     }
     
     if (Eingabe.charAt(0) == 'f') {
-      // Feedbackeingabe, "blinkt" wird mit Feedbackwerten belegt
+      // Feedbackeingabe, blinkt[] wird mit Feedbackwerten belegt
       for (int i = 1; i <= 4; i++) {
         Feedback[i] = Eingabe.charAt(i) - '0';
         Art = setFarbe(i, Feedback[i]);
@@ -326,7 +328,7 @@ void loop() {
         DmxSimple.write(13, 255);
       }
       if (Eingabe.charAt(1) == 'a') {
-        // Abbruch, alles weiß
+        // Abbruch, alles weiss
         for (int i = 1; i <= 10; i = i + 3) {
           Umwandlung("weiss", i);
           DmxSimple.write(i, r);
