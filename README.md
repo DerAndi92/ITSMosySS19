@@ -1,4 +1,4 @@
-# MosySS19
+# ITSMosySS19
 
 --------------------------------------
 HAW Hamburg Project "Illuminated Mind"
